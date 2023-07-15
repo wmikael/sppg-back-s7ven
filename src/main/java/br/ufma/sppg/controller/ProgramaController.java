@@ -10,6 +10,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.ufma.sppg.service.ProgramaService;
 import br.ufma.sppg.service.exceptions.ServicoRuntimeException;
+import br.ufma.sppg.model.Programa;
+import br.ufma.sppg.model.Docente;
+import br.ufma.sppg.model.Orientacao;
+import br.ufma.sppg.model.Producao;
+import br.ufma.sppg.model.Tecnica;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/programa")
