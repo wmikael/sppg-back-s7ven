@@ -27,6 +27,14 @@ public class ProgramaController {
     @Autowired
     ProgramaService programa;
 
+    @GetMapping("/all-programas")
+    public ResponseEntity<List<Programa>> allProgramas(){
+        var response=programa.allProgramas();
+        if(response!=null) {
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.badRequest().build();
+    }
     @GetMapping("/obterPrograma")
     public ResponseEntity obterPrograma(
             @RequestParam("programa") String nome){
@@ -40,7 +48,7 @@ public class ProgramaController {
 
     @GetMapping("/obterDocentesPrograma")
     public ResponseEntity obterDocentesPrograma(
-        @RequestParam("docente") Integer idPrograma){
+            @RequestParam("docente") Integer idPrograma){
         try{
             List <Docente> docentes = programa.obterDocentesPrograma(idPrograma);
             return new ResponseEntity(docentes, HttpStatus.OK);
@@ -51,7 +59,7 @@ public class ProgramaController {
 
     @GetMapping("/obterProducoesPrograma")
     public ResponseEntity obterProducoesPrograma(
-        @RequestParam("programa") Integer idPrograma, Integer anoIni, Integer anoFin){
+            @RequestParam("programa") Integer idPrograma, Integer anoIni, Integer anoFin){
         try{
             List <Producao> producoes = programa.obterProducoes(idPrograma, anoIni, anoFin);
             return new ResponseEntity(producoes, HttpStatus.OK);
@@ -62,7 +70,7 @@ public class ProgramaController {
 
     @GetMapping("/obterOrientacoesPrograma")
     public ResponseEntity obterOrientacoesPorgrama(
-        @RequestParam("programa") Integer idPrograma, Integer anoIni, Integer anoFin){
+            @RequestParam("programa") Integer idPrograma, Integer anoIni, Integer anoFin){
         try{
             List <Orientacao> orientacoes = programa.obterOrientacoes(idPrograma, anoIni, anoFin);
             return new ResponseEntity(orientacoes, HttpStatus.OK);
@@ -73,7 +81,7 @@ public class ProgramaController {
 
     @GetMapping("/obterTecnicasPrograma")
     public ResponseEntity obterTecnicasPrograma(
-        @RequestParam("programa") Integer idPrograma, Integer anoIni, Integer anoFin){
+            @RequestParam("programa") Integer idPrograma, Integer anoIni, Integer anoFin){
         try{
             List <Tecnica> tecnicas = programa.obterTecnicas(idPrograma, anoIni, anoFin);
             return new ResponseEntity(tecnicas, HttpStatus.OK);
@@ -86,9 +94,9 @@ public class ProgramaController {
 
     @GetMapping("/qtv_orientacoes_producao") // QTV = quantitativo
     public ResponseEntity<?> ObterQuantitativoOrientacaoProducao(
-                        @RequestParam("idPrograma") Integer idPrograma,
-                        @RequestParam("anoInicial") Integer anoIni,
-                        @RequestParam("anoFinal") Integer aniFin){
+            @RequestParam("idPrograma") Integer idPrograma,
+            @RequestParam("anoInicial") Integer anoIni,
+            @RequestParam("anoFinal") Integer aniFin){
 
         try{
             Integer quantitativo = servicePPG.quantitativoOrientacaoProducao(idPrograma, anoIni, aniFin);
@@ -101,14 +109,14 @@ public class ProgramaController {
 
     @GetMapping("/qtv_orientacoes_tecnica") // QTV = quantitativo
     public ResponseEntity<?> ObterQuantitativoOrientacaoTecnica(
-                        @RequestParam("idPrograma") Integer idPrograma,
-                        @RequestParam("anoInicial") Integer anoIni,
-                        @RequestParam("anoFinal") Integer aniFin){
+            @RequestParam("idPrograma") Integer idPrograma,
+            @RequestParam("anoInicial") Integer anoIni,
+            @RequestParam("anoFinal") Integer aniFin){
 
         try{
             Integer quantitativo = servicePPG.quantitativoOrientacaoTecnica(idPrograma, anoIni, aniFin);
             return new ResponseEntity<Integer>(quantitativo, HttpStatus.OK);
-            
+
         }catch(ServicoRuntimeException e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
