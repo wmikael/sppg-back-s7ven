@@ -49,7 +49,7 @@ public class ImportadorService {
                 //apenas para ver onde está, comentar
                 System.out.println("Executando: " + ref.getNome());
                 //procura pela mesmo docente na base
-                Docente base = repoDoc.findByNome(ref.getNome());                
+                Docente base = (Docente) repoDoc.findByNome(ref.getNome());
                 if (base == null)                     
                     base = Docente.builder()
                                 .lattes(ref.getLattes())
