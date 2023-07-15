@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.ufma.sppg.dto.DocenteProducoes;
 import br.ufma.sppg.model.Docente;
 import br.ufma.sppg.model.Orientacao;
 import br.ufma.sppg.model.Producao;
@@ -166,6 +167,34 @@ public class ProducaoService {
         }
         throw new ServicoRuntimeException("A Producao não existe");
     }
+
+    public List<DocenteProducoes>obterProducoesDocentes(Integer data1, Integer data2){
+        if (data1 >= data2){
+            Integer data = data2;
+            data2 = data1;
+            data1 = data;
+        }
+
+        List<Docente> docentes = docRepo.findAll();
+        List<DocenteProducoes> producoesQualis = new ArrayList<>();
+        for(Docente docente : docentes){
+            if(docRepo.getReferenceById(docente.getId()).getProducoes() == null || docRepo.getReferenceById(docente.getId()).getProducoes().isEmpty())
+                throw new ServicoRuntimeException("O docente não possui nenhuma produção registrada");
+            List<Producao> docProducoes = new ArrayList<>();
+
+            for(int i = 0; i < docRepo.getReferenceById(docente.getId()).getProducoes().size(); i++){
+                if(docRepo.getReferenceById(docente.getId()).getProducoes().get(i).getAno() >= data1 && docRepo.getReferenceById(docente.getId()).getProducoes().get(i).getAno() <= data2){
+                    docProducoes.add(docRepo.getReferenceById(docente.getId()).getProducoes().get(i));
+                }
+            }
+            DocenteProducoes docenteProducao = DocenteProducoes.builder().docente(docente).producoes(docProducoes).build();
+            producoesQualis.add(docenteProducao);
+
+
+        }
+        return producoesQualis;
+    }
+
 /*
     public boolean excluirProducao(Integer idProducao){
         Optional<Producao> producao = prodRepo.findById(idProducao);
