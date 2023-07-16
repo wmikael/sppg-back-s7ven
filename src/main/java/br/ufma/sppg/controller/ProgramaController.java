@@ -3,10 +3,7 @@ package br.ufma.sppg.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import br.ufma.sppg.service.ProgramaService;
 import br.ufma.sppg.service.exceptions.ServicoRuntimeException;
@@ -46,7 +43,7 @@ public class ProgramaController {
         }
     }
 
-    @GetMapping("/obterDocentesPrograma")
+    @GetMapping("/obterDocentesPrograma/{idPrograma}")
     public ResponseEntity obterDocentesPrograma(
             @RequestParam("docente") Integer idPrograma){
         try{
@@ -57,9 +54,11 @@ public class ProgramaController {
         }
     }
 
-    @GetMapping("/obterProducoesPrograma")
-    public ResponseEntity obterProducoesPrograma(
-            @RequestParam("programa") Integer idPrograma, Integer anoIni, Integer anoFin){
+    @GetMapping("/obterProducoesPrograma/{idPrograma}/{anoIni}/{anoFin}")
+    public ResponseEntity<?> obterProducoesPrograma(
+            @PathVariable(value = "idPrograma", required = true) Integer idPrograma,
+            @PathVariable(value = "anoIni", required = true) Integer anoIni,
+            @PathVariable(value = "anoFin", required = true) Integer anoFin){
         try{
             List <Producao> producoes = programa.obterProducoes(idPrograma, anoIni, anoFin);
             return new ResponseEntity(producoes, HttpStatus.OK);
@@ -68,9 +67,11 @@ public class ProgramaController {
         }
     }
 
-    @GetMapping("/obterOrientacoesPrograma")
-    public ResponseEntity obterOrientacoesPorgrama(
-            @RequestParam("programa") Integer idPrograma, Integer anoIni, Integer anoFin){
+    @GetMapping("/obterOrientacoesPrograma/{idPrograma}/{anoIni}/{anoFin}")
+    public ResponseEntity<?> obterOrientacoesPorgrama(
+            @PathVariable(value = "idPrograma", required = true) Integer idPrograma,
+            @PathVariable(value = "anoIni", required = true) Integer anoIni,
+            @PathVariable(value = "anoFin", required = true) Integer anoFin){
         try{
             List <Orientacao> orientacoes = programa.obterOrientacoes(idPrograma, anoIni, anoFin);
             return new ResponseEntity(orientacoes, HttpStatus.OK);
@@ -79,9 +80,11 @@ public class ProgramaController {
         }
     }
 
-    @GetMapping("/obterTecnicasPrograma")
-    public ResponseEntity obterTecnicasPrograma(
-            @RequestParam("programa") Integer idPrograma, Integer anoIni, Integer anoFin){
+    @GetMapping("/obterTecnicasPrograma/{idPrograma}/{anoIni}/{anoFin}")
+    public ResponseEntity<?> obterTecnicasPrograma(
+            @PathVariable(value = "idPrograma", required = true) Integer idPrograma,
+            @PathVariable(value = "anoIni", required = true) Integer anoIni,
+            @PathVariable(value = "anoFin", required = true) Integer anoFin){
         try{
             List <Tecnica> tecnicas = programa.obterTecnicas(idPrograma, anoIni, anoFin);
             return new ResponseEntity(tecnicas, HttpStatus.OK);
