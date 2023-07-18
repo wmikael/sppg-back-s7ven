@@ -174,4 +174,64 @@ public class DocenteService {
         }
         */
     }
+    public List<Orientacao> obterOrientacoesDocente(Integer idDocente, Integer anoIni, Integer anoFin) {
+        verificarData(anoIni, anoFin);
+        Docente docente = repository.findById(idDocente).orElseThrow(() -> new ServicoRuntimeException("Docente não encontrado"));
+        List<Orientacao> orientacoes = new ArrayList<>();
+        List<Orientacao> orientacoesDoc = new ArrayList<>();
+        ArrayList<Integer> idOrientacoes = new ArrayList<>();
+
+        orientacoesDoc = docente.getOrientacoes();
+        for (Orientacao orientacao : orientacoesDoc) {
+
+            if (orientacao.getAno() >= anoIni && orientacao.getAno() <= anoFin
+                    && !idOrientacoes.contains(orientacao.getId())) {
+
+                idOrientacoes.add(orientacao.getId());
+                orientacoes.add(orientacao);
+            }
+        }
+
+        return orientacoes;
+    }
+
+    public List<Producao> obterProducoesDocente(Integer idDocente, Integer anoIni, Integer anoFin){
+        verificarData(anoIni, anoFin);
+        Docente docente = repository.findById(idDocente).orElseThrow(() -> new ServicoRuntimeException("Docente não encontrado"));
+        List<Producao> producoes = new ArrayList<>();
+        List<Producao> producoesDoc = new ArrayList<>();
+        ArrayList<Integer> idProducoes = new ArrayList<>();
+
+        producoesDoc = docente.getProducoes();
+        for (Producao producao : producoesDoc) {
+
+            if (producao.getAno() >= anoIni && producao.getAno() <= anoFin
+                    && !idProducoes.contains(producao.getId())) {
+
+                idProducoes.add(producao.getId());
+                producoes.add(producao);
+            }
+        }
+        return producoes;
+    }
+
+    public List<Tecnica> obterTecnicasDocente(Integer idDocente, Integer anoIni, Integer anoFin){
+        verificarData(anoIni, anoFin);
+        Docente docente = repository.findById(idDocente).orElseThrow(() -> new ServicoRuntimeException("Docente não encontrado"));
+        List<Tecnica> tecnicas= new ArrayList<>();
+        List<Tecnica> tecnicasDoc = new ArrayList<>();
+        ArrayList<Integer> idTecnicas = new ArrayList<>();
+
+        tecnicasDoc = docente.getTecnicas();
+        for (Tecnica tecnica : tecnicasDoc) {
+
+            if (tecnica.getAno() >= anoIni && tecnica.getAno() <= anoFin
+                    && !idTecnicas.contains(tecnica.getId())) {
+
+                idTecnicas.add(tecnica.getId());
+                tecnicas.add(tecnica);
+            }
+        }
+        return tecnicas;
+    }
 }

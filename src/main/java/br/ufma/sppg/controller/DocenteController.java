@@ -6,6 +6,7 @@ import br.ufma.sppg.dto.DocenteProducoes;
 import br.ufma.sppg.model.Docente;
 import br.ufma.sppg.service.DocenteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -124,6 +125,45 @@ public class DocenteController{
             List<Tecnica> tecnicaDocente = tecnicaServivce.obterTecnicasDocente(idDocente); 
             return ResponseEntity.ok(tecnicaDocente);
         }catch (ServicoRuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/obterOrientacoesDocente/{idDocente}/{anoIni}/{anoFin}")
+    public ResponseEntity<?> obterOrientacoesDocente(
+            @PathVariable(value = "idDocente", required = true) Integer idDocente,
+            @PathVariable(value = "anoIni", required = true) Integer anoIni,
+            @PathVariable(value = "anoFin", required = true) Integer anoFin){
+        try{
+            List <Orientacao> orientacoes = docenteService.obterOrientacoesDocente(idDocente, anoIni, anoFin);
+            return new ResponseEntity<>(orientacoes, HttpStatus.OK);
+        }catch (ServicoRuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/obterTecnicasDocente/{idDocente}/{anoIni}/{anoFin}")
+    public ResponseEntity<?> obterTecnicasDocente(
+            @PathVariable(value = "idDocente", required = true) Integer idDocente,
+            @PathVariable(value = "anoIni", required = true) Integer anoIni,
+            @PathVariable(value = "anoFin", required = true) Integer anoFin){
+        try{
+            List <Tecnica> tecnicas = docenteService.obterTecnicasDocente(idDocente, anoIni, anoFin);
+            return new ResponseEntity<>(tecnicas, HttpStatus.OK);
+        }catch (ServicoRuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/obterProducoesDocente/{idDocente}/{anoIni}/{anoFin}")
+    public ResponseEntity<?> obterProducoesDocente(
+            @PathVariable(value = "idDocente", required = true) Integer idDocente,
+            @PathVariable(value = "anoIni", required = true) Integer anoIni,
+            @PathVariable(value = "anoFin", required = true) Integer anoFin){
+        try{
+            List <Producao> producoes = docenteService.obterProducoesDocente(idDocente, anoIni, anoFin);
+            return new ResponseEntity<>(producoes, HttpStatus.OK);
+        } catch (ServicoRuntimeException e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
