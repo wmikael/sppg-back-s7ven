@@ -76,9 +76,25 @@ public class QualisController {
     }
 
     // PASSA O ANO
+    @GetMapping(value = "/indicesPrograma/{idProg}/{anoIni}/{anoFim}")
+    public ResponseEntity obterIndicesCapesPrograma(@PathVariable Integer idProg, @PathVariable Integer anoIni,
+                                            @PathVariable Integer anoFim) {
+        Indice indice;
+        List<Producao> producoes;
+        try {
+            indice = service.obterProducaoIndices(idProg, anoIni, anoFim);
+            producoes = service.obterProducoes(idProg, anoIni, anoFim);
+        } catch (ServicoRuntimeException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        IndiceQualisDTO res = IndiceQualisDTO.builder().indice(indice).producoes(producoes).build();
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    // PASSA O ANO
     @GetMapping(value = "/indice/{idProg}/filter")
     public ResponseEntity obterIndicesCapes(@PathVariable Integer idProg, @RequestParam Integer anoIni,
-            @RequestParam Integer anoFim) {
+                                            @RequestParam Integer anoFim) {
 
         Indice indice;
         List<Producao> producoes;
@@ -95,10 +111,8 @@ public class QualisController {
     }
 
     @GetMapping(value = "/producoesQualis/{idProg}/{anoIni}/{anoFim}")
-    public ResponseEntity obterProducoesQualisSemTipo(@PathVariable Integer idProg, @PathVariable Integer anoIni,
-            @PathVariable Integer anoFim) {
-
-        QualisSummaryDTO summary = QualisSummaryDTO.builder().qtd(0).build();
+    public ResponseEntity<?> obterProducoesQualisSemTipo(@PathVariable Integer idProg, @PathVariable Integer anoIni,
+                                                      @PathVariable Integer anoFim) {
 
         try {
             List<Producao> producoes = service.obterProducoes(idProg, anoIni, anoFim);
@@ -167,7 +181,7 @@ public class QualisController {
     // PASSA O ANO
     @GetMapping(value = "/{idProg}/{tipo}/filter")
     public ResponseEntity obterQualisPorTipo(@PathVariable Integer idProg, @PathVariable String tipo,
-            @RequestParam Integer anoIni, @RequestParam Integer anoFim) {
+                                             @RequestParam Integer anoIni, @RequestParam Integer anoFim) {
 
         QualisSummaryDTO summary = QualisSummaryDTO.builder().qtd(0).build();
 
@@ -193,7 +207,7 @@ public class QualisController {
     // PASSA O ANO
     @GetMapping(value = "/stats/{idProg}/filter")
     public ResponseEntity obterEstatisticas(@PathVariable Integer idProg, @RequestParam Integer anoIni,
-            @RequestParam Integer anoFim) {
+                                            @RequestParam Integer anoFim) {
 
         QualisStatsDTO stats;
 
@@ -233,7 +247,7 @@ public class QualisController {
 
     @GetMapping(value = "/obterProducoesQualisPorTipo/{idProg}/{anoIni}/{anoFim}/{tipo}")
     public ResponseEntity<?> obterProducoesQualisPorTipo(@PathVariable Integer idProg, @PathVariable Integer anoIni,
-            @PathVariable Integer anoFim, @PathVariable String tipo){
+                                                         @PathVariable Integer anoFim, @PathVariable String tipo){
         try{
             List<Producao> producoes = service.obterProducoes(idProg, anoIni, anoFim);
             List<List<Integer>> qualis = new ArrayList<>();

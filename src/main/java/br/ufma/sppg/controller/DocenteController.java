@@ -1,8 +1,10 @@
 package br.ufma.sppg.controller;
 
-import java.util.List;
+import java.util.*;
 
 import br.ufma.sppg.dto.DocenteProducoes;
+import br.ufma.sppg.model.Docente;
+import br.ufma.sppg.service.DocenteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,8 +21,6 @@ import br.ufma.sppg.service.ProducaoService;
 import br.ufma.sppg.service.TecnicaService;
 import br.ufma.sppg.service.exceptions.ServicoRuntimeException;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -35,7 +35,20 @@ public class DocenteController{
 
     @Autowired
     OrientacaoService orientacaoServivce;
+
+    @Autowired
+    DocenteService docenteService;
     //teste de commit
+
+    @GetMapping("/obterTodosDocentes")
+    public ResponseEntity<?> obterTodosDocentes(){
+        try{
+            List<Docente> docentes = docenteService.obterTodosDocentes();
+            return ResponseEntity.ok(docentes);
+        }catch (ServicoRuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
     @GetMapping("/obterProducoesQualis/{data1}/{data2}")
     public ResponseEntity<?> obterProducoesDeDocenteContadas(@PathVariable(value = "data1", required = true)  Integer data1,

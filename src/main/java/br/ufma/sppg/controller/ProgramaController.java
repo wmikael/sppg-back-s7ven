@@ -1,5 +1,7 @@
 package br.ufma.sppg.controller;
 
+import br.ufma.sppg.dto.DocenteProducoes;
+import br.ufma.sppg.service.ProducaoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,9 @@ public class ProgramaController {
 
     @Autowired
     ProgramaService programa;
+
+    @Autowired
+    ProducaoService producao;
 
     @GetMapping("/all-programas")
     public ResponseEntity<List<Programa>> allProgramas(){
@@ -49,6 +54,18 @@ public class ProgramaController {
         try{
             List <Docente> docentes = programa.obterDocentesPrograma(idPrograma);
             return new ResponseEntity(docentes, HttpStatus.OK);
+        }catch (ServicoRuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/obterTodasAsProduções/{anoIni}/{anoFin}")
+    public ResponseEntity<?> obterTodasAsProducoes(
+            @PathVariable(value = "anoIni", required = true) Integer anoIni,
+            @PathVariable(value = "anoFin", required = true) Integer anoFin){
+        try{
+            List<DocenteProducoes> producoes = producao.obterProducoesDocentes(anoIni, anoFin);
+            return new ResponseEntity(producoes, HttpStatus.OK);
         }catch (ServicoRuntimeException e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
