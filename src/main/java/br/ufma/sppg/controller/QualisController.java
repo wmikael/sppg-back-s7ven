@@ -3,6 +3,7 @@ package br.ufma.sppg.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.ufma.sppg.service.ProducaoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -28,6 +29,9 @@ public class QualisController {
     @Autowired
     ProgramaService service;
 
+    @Autowired
+    ProducaoService producaoService;
+
     // NÃO PASSA O ANO
     /*
      * ao resolver conflitos:
@@ -45,6 +49,23 @@ public class QualisController {
         try {
             indice = service.obterProducaoIndices(idProg, 1950, 2050);
             producoes = service.obterProducoes(idProg, 1950, 2050);
+        } catch (ServicoRuntimeException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+
+        IndiceQualisDTO res = IndiceQualisDTO.builder().indice(indice).producoes(producoes).build();
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/obterIndicadoresCapesDocente/{idDocente}/{anoIni}/{anoFim}")
+    public ResponseEntity<?> obterIndicesCapesDocente(@PathVariable Integer idDocente, @PathVariable Integer anoIni, @PathVariable Integer anoFim) {
+
+        Indice indice;
+        List<Producao> producoes;
+
+        try {
+            indice = service.obterIndicadoresDocente(idDocente, anoIni, anoFim);
+            producoes = producaoService.obterProducoesDocente(idDocente, anoIni, anoFim);
         } catch (ServicoRuntimeException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
