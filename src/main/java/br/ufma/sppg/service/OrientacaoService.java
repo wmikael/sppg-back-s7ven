@@ -26,6 +26,7 @@ public class OrientacaoService {
     @Autowired
     private OrientacaoRepository orientacaoRepository;
 
+
     @Autowired
     private ProgramaRepository programaRepository;
 
@@ -88,6 +89,7 @@ public class OrientacaoService {
         
         return orientacaoRepository.save(orientacao);
     }
+
 
     @Transactional
     public Orientacao associarOrientacaoTecnica(Integer idOri, Integer idTec) {

@@ -43,6 +43,18 @@ public class OrientacaoController {
     }
   }
 
+  @PostMapping("/associarOrientacaoProducao{idOri}/producao/{idProd}")
+  public ResponseEntity<?> associarOrientacaoProducao(@PathVariable Integer idOri, @PathVariable Integer idProd) {
+    try {
+      Orientacao orientacao = orientacaoService.associarOrientacaoProducao(idOri, idProd);
+      return ResponseEntity.ok(orientacao);
+    } catch (ServicoRuntimeException e) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+    }
+  }
+
   @GetMapping("/obterOrientacoesDocenteComProducao/{idDocente}/{dataInicio}/{dataFim}")
   public ResponseEntity<?> obterOrientacaoDocenteComProducao(@PathVariable("idDocente") Integer idDocente,
       @PathVariable("dataInicio") Integer dataInicio, @PathVariable("dataFim") Integer dataFim) {
