@@ -84,6 +84,45 @@ public class ProgramaController {
         }
     }
 
+    @GetMapping("/obterOrientacoesDocente/{idDocente}/{anoIni}/{anoFin}")
+    public ResponseEntity<?> obterOrientacoesDocente(
+            @PathVariable(value = "idDocente", required = true) Integer idDocente,
+            @PathVariable(value = "anoIni", required = true) Integer anoIni,
+            @PathVariable(value = "anoFin", required = true) Integer anoFin){
+        try{
+            List <Orientacao> orientacoes = programa.obterOrientacoesDocente(idDocente, anoIni, anoFin);
+            return new ResponseEntity<>(orientacoes, HttpStatus.OK);
+        }catch (ServicoRuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/obterTecnicasDocente/{idDocente}/{anoIni}/{anoFin}")
+    public ResponseEntity<?> obterTecnicasDocente(
+            @PathVariable(value = "idDocente", required = true) Integer idDocente,
+            @PathVariable(value = "anoIni", required = true) Integer anoIni,
+            @PathVariable(value = "anoFin", required = true) Integer anoFin){
+            try{
+                List <Tecnica> tecnicas = programa.obterTecnicasDocente(idDocente, anoIni, anoFin);
+                return new ResponseEntity<>(tecnicas, HttpStatus.OK);
+            }catch (ServicoRuntimeException e){
+                return ResponseEntity.badRequest().body(e.getMessage());
+            }
+    }
+
+    @GetMapping("/obterProducoesDocente/{idDocente}/{anoIni}/{anoFin}")
+    public ResponseEntity<?> obterProducoesDocente(
+            @PathVariable(value = "idDocente", required = true) Integer idDocente,
+            @PathVariable(value = "anoIni", required = true) Integer anoIni,
+            @PathVariable(value = "anoFin", required = true) Integer anoFin){
+        try{
+            List <Producao> producoes = programa.obterProducoesDocente(idDocente, anoIni, anoFin);
+            return new ResponseEntity<>(producoes, HttpStatus.OK);
+        } catch (ServicoRuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     @GetMapping("/obterOrientacoesPrograma/{idPrograma}/{anoIni}/{anoFin}")
     public ResponseEntity<?> obterOrientacoesPorgrama(
             @PathVariable(value = "idPrograma", required = true) Integer idPrograma,
