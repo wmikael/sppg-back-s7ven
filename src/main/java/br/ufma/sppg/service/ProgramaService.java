@@ -3,6 +3,7 @@ package br.ufma.sppg.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.ufma.sppg.repo.DocenteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,9 @@ public class ProgramaService {
     @Autowired
     ProgramaRepository repository;
 
+    @Autowired
+    DocenteRepository docenteRepository;
+
     public List<Programa> allProgramas(){
         return repository.findAll();
     }
@@ -34,14 +38,64 @@ public class ProgramaService {
         return repository.obterDocentes(idPrograma);
     }
 
+    public Indice obterIndicadoresDocente(Integer idDocente, Integer anoIni, Integer anoFin){
+        verificarData(anoIni, anoFin);
+        Docente docente = docenteRepository.findById(idDocente).orElseThrow(() -> new ServicoRuntimeException("Docente não encontrado"));
+        Double iRestrito = 0.0;
+        Double iNRestrito = 0.0;
+        Double iGeral;
+        List<Producao> producoes;
+        ArrayList<Integer> indicesProd = new ArrayList<>();
+
+        producoes = docente.getProducoes();
+
+        for(Producao producao : producoes){
+            if (producao.getAno() >= anoIni && producao.getAno() <= anoFin && !indicesProd.contains(producao.getId())) {
+
+                if (producao.getQualis() != null){
+                    indicesProd.add(producao.getId());
+                    switch (producao.getQualis()) {
+                        case "A1":
+                            iRestrito += 1.0f;
+                            break;
+                        case "A2":
+                            iRestrito += 0.85;
+                            break;
+                        case "A3":
+                            iRestrito += 0.725;
+                            break;
+                        case "A4":
+                            iRestrito += 0.625;
+                            break;
+                        case "B1":
+                            iNRestrito += 0.5;
+                            break;
+                        case "B2":
+                            iNRestrito += 0.25;
+                            break;
+                        case "B3":
+                            iNRestrito += 0.1;
+                            break;
+                        case "B4":
+                            iNRestrito += 0.05;
+                            break;
+                    }
+                }
+            }
+        }
+        iGeral = iRestrito + iNRestrito;
+
+        return new Indice(iRestrito, iNRestrito, iGeral);
+    }
+
     public Indice obterProducaoIndices(Integer idPrograma, Integer anoIni, Integer anoFin) {
         verificarId(idPrograma);
         verificarData(anoIni, anoFin);
         List<Docente> docentes = repository.obterDocentes(idPrograma);
         Double iRestrito = 0.0;
         Double iNRestrito = 0.0;
-        Double iGeral = 0.0;
-        List<Producao> producoes = new ArrayList<>();
+        Double iGeral;
+        List<Producao> producoes;
         ArrayList<Integer> indicesProd = new ArrayList<>();
 
         for (Docente docente : docentes) {
