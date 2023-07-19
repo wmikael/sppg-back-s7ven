@@ -182,11 +182,11 @@ public class ProducaoService {
         throw new ServicoRuntimeException("A Producao não existe");
     }
 
-    public List<DocenteProducoes>obterProducoesDocentes(Integer data1, Integer data2){
-        if (data1 >= data2){
-            Integer data = data2;
-            data2 = data1;
-            data1 = data;
+    public List<DocenteProducoes>obterProducoesDocentes(Integer anoIni, Integer anoFim){
+        if (anoIni >= anoFim){
+            Integer data = anoFim;
+            anoFim = anoIni;
+            anoIni = data;
         }
 
         List<Docente> docentes = docRepo.findAll();
@@ -197,7 +197,8 @@ public class ProducaoService {
             List<Producao> docProducoes = new ArrayList<>();
 
             for(int i = 0; i < docRepo.getReferenceById(docente.getId()).getProducoes().size(); i++){
-                if(docRepo.getReferenceById(docente.getId()).getProducoes().get(i).getAno() >= data1 && docRepo.getReferenceById(docente.getId()).getProducoes().get(i).getAno() <= data2){
+                if(docRepo.getReferenceById(docente.getId()).getProducoes().get(i).getAno() >= anoIni
+                        && docRepo.getReferenceById(docente.getId()).getProducoes().get(i).getAno() <= anoFim){
                     docProducoes.add(docRepo.getReferenceById(docente.getId()).getProducoes().get(i));
                 }
             }

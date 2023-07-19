@@ -31,77 +31,69 @@ public class ProgramaController {
 
     @GetMapping("/all-programas")
     public ResponseEntity<List<Programa>> allProgramas(){
-        var response=programa.allProgramas();
+        var response = programa.allProgramas();
         if(response!=null) {
             return ResponseEntity.ok(response);
         }
         return ResponseEntity.badRequest().build();
     }
-    @GetMapping("/obterPrograma")
-    public ResponseEntity obterPrograma(
-            @RequestParam("programa") String nome){
+    @GetMapping("/obterProgramaNome/{nome}")
+    public ResponseEntity<?> obterProgramaNome(@PathVariable(value = "nome", required = true) String nome){
         try{
-            List <Programa> programas = programa.obterPrograma(nome);
-            return new ResponseEntity(programas, HttpStatus.OK);
+            List<Programa> programas = programa.obterPrograma(nome);
+            return new ResponseEntity<>(programas, HttpStatus.OK);
         }catch (ServicoRuntimeException e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
     @GetMapping("/obterDocentesPrograma/{idPrograma}")
-    public ResponseEntity obterDocentesPrograma(
-            @RequestParam("docente") Integer idPrograma){
+    public ResponseEntity<?> obterDocentesPrograma(@PathVariable(value = "idPrograma", required = true) Integer idPrograma){
         try{
-            List <Docente> docentes = programa.obterDocentesPrograma(idPrograma);
-            return new ResponseEntity(docentes, HttpStatus.OK);
+            List<Docente> docentes = programa.obterDocentesPrograma(idPrograma);
+            return new ResponseEntity<>(docentes, HttpStatus.OK);
         }catch (ServicoRuntimeException e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
-    @GetMapping("/obterTodasAsProduções/{anoIni}/{anoFin}")
-    public ResponseEntity<?> obterTodasAsProducoes(
-            @PathVariable(value = "anoIni", required = true) Integer anoIni,
-            @PathVariable(value = "anoFin", required = true) Integer anoFin){
+    @GetMapping("/obterTodasAsProduçõesPorAno/{anoIni}/{anoFin}")
+    public ResponseEntity<?> obterTodasAsProducoesPorAno(@PathVariable(value = "anoIni", required = true) Integer anoIni,
+                                                    @PathVariable(value = "anoFin", required = true) Integer anoFin){
         try{
             List<DocenteProducoes> producoes = producao.obterProducoesDocentes(anoIni, anoFin);
-            return new ResponseEntity(producoes, HttpStatus.OK);
+            return new ResponseEntity<>(producoes, HttpStatus.OK);
         }catch (ServicoRuntimeException e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
     @GetMapping("/obterProducoesPrograma/{idPrograma}/{anoIni}/{anoFin}")
-    public ResponseEntity<?> obterProducoesPrograma(
-            @PathVariable(value = "idPrograma", required = true) Integer idPrograma,
-            @PathVariable(value = "anoIni", required = true) Integer anoIni,
-            @PathVariable(value = "anoFin", required = true) Integer anoFin){
+    public ResponseEntity<?> obterProducoesPrograma(@PathVariable(value = "idPrograma", required = true) Integer idPrograma,
+                                                @PathVariable(value = "anoIni", required = true) Integer anoIni,
+                                                @PathVariable(value = "anoFin", required = true) Integer anoFin){
         try{
             List <Producao> producoes = programa.obterProducoes(idPrograma, anoIni, anoFin);
-            return new ResponseEntity(producoes, HttpStatus.OK);
+            return new ResponseEntity<>(producoes, HttpStatus.OK);
         }catch (ServicoRuntimeException e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
-
-
     @GetMapping("/obterOrientacoesPrograma/{idPrograma}/{anoIni}/{anoFin}")
-    public ResponseEntity<?> obterOrientacoesPorgrama(
-            @PathVariable(value = "idPrograma", required = true) Integer idPrograma,
-            @PathVariable(value = "anoIni", required = true) Integer anoIni,
-            @PathVariable(value = "anoFin", required = true) Integer anoFin){
+    public ResponseEntity<?> obterOrientacoesPrograma(@PathVariable(value = "idPrograma", required = true) Integer idPrograma,
+                                                @PathVariable(value = "anoIni", required = true) Integer anoIni,
+                                                @PathVariable(value = "anoFin", required = true) Integer anoFin){
         try{
             List <Orientacao> orientacoes = programa.obterOrientacoes(idPrograma, anoIni, anoFin);
-            return new ResponseEntity(orientacoes, HttpStatus.OK);
+            return new ResponseEntity<>(orientacoes, HttpStatus.OK);
         }catch (ServicoRuntimeException e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
     @GetMapping("/obterTecnicasPrograma/{idPrograma}/{anoIni}/{anoFin}")
-    public ResponseEntity<?> obterTecnicasPrograma(
-            @PathVariable(value = "idPrograma", required = true) Integer idPrograma,
+    public ResponseEntity<?> obterTecnicasPrograma(@PathVariable(value = "idPrograma", required = true) Integer idPrograma,
             @PathVariable(value = "anoIni", required = true) Integer anoIni,
             @PathVariable(value = "anoFin", required = true) Integer anoFin){
         try{

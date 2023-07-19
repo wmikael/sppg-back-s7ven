@@ -7,7 +7,6 @@ import java.util.Collections;
 import br.ufma.sppg.service.ProducaoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,11 +41,9 @@ public class QualisController {
      * tratativa de exceções
      */
     @GetMapping(value = "/indice/{idProg}")
-    public ResponseEntity obterIndicesCapes(@PathVariable Integer idProg) {
-
+    public ResponseEntity<?> obterIndicesCapes(@PathVariable(value = "idProg") Integer idProg) {
         Indice indice;
         List<Producao> producoes;
-
         try {
             indice = service.obterProducaoIndices(idProg, 1950, 2050);
             producoes = service.obterProducoes(idProg, 1950, 2050);
@@ -59,8 +56,9 @@ public class QualisController {
     }
 
     @GetMapping(value = "/obterIndicadoresCapesDocente/{idDocente}/{anoIni}/{anoFim}")
-    public ResponseEntity<?> obterIndicesCapesDocente(@PathVariable Integer idDocente, @PathVariable Integer anoIni, @PathVariable Integer anoFim) {
-
+    public ResponseEntity<?> obterIndicesCapesDocente(@PathVariable(value = "idDocente") Integer idDocente,
+                                                      @PathVariable(value = "anoIni") Integer anoIni,
+                                                      @PathVariable(value = "anoFim") Integer anoFim) {
         Indice indice;
         List<Producao> producoes;
 
@@ -70,7 +68,6 @@ public class QualisController {
         } catch (ServicoRuntimeException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-
         IndiceQualisDTO res = IndiceQualisDTO.builder().indice(indice).producoes(producoes).build();
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
@@ -95,9 +92,8 @@ public class QualisController {
     // PASSA O ANO
     @GetMapping(value = "/indice/{idPrograma}/{anoIni}/{anoFin}")
     public ResponseEntity<?> obterIndicesCapes(@PathVariable(value = "idPrograma", required = true) Integer idPrograma,
-            @PathVariable(value = "anoIni", required = true) Integer anoIni,
-            @PathVariable(value = "anoFin", required = true) Integer anoFin){
-
+                                                @PathVariable(value = "anoIni", required = true) Integer anoIni,
+                                                @PathVariable(value = "anoFin", required = true) Integer anoFin){
         try {
             Indice indice = service.obterProducaoIndices(idPrograma, anoIni, anoFin);
             List<Producao> producoes = service.obterProducoes(idPrograma, anoIni, anoFin);
@@ -122,25 +118,15 @@ public class QualisController {
                 if (prod.getAno()>=anoIni && prod.getAno()<=anoFim){
                     if (prod.getTipo()!=null){
                         if (prod.getQualis() != null) {
-                            if(prod.getQualis().equals("A1")){
-                                qualis.get(0).set(anoFim-prod.getAno(), qualis.get(0).get(anoFim-prod.getAno())+1);
-                            }else if(prod.getQualis().equals("A2")){
-                                qualis.get(1).set(anoFim-prod.getAno(), qualis.get(1).get(anoFim-prod.getAno())+1);
-                            }else if(prod.getQualis().equals("A3")){
-                                qualis.get(2).set(anoFim-prod.getAno(), qualis.get(2).get(anoFim-prod.getAno())+1);
-                            }else if(prod.getQualis().equals("A4")){
-                                qualis.get(3).set(anoFim-prod.getAno(), qualis.get(3).get(anoFim-prod.getAno())+1);
-//                            //A tabela no prótotipo usa só A1 a A4
-//                            }else if(prod.getQualis().equals("B1")){
-//                                qualis.get(4).set(anoFim-prod.getAno(), qualis.get(4).get(anoFim-prod.getAno())+1);
-//                            }else if(prod.getQualis().equals("B2")){
-//                                qualis.get(5).set(anoFim-prod.getAno(), qualis.get(5).get(anoFim-prod.getAno())+1);
-//                            }else if(prod.getQualis().equals("B3")){
-//                                qualis.get(6).set(anoFim-prod.getAno(), qualis.get(6).get(anoFim-prod.getAno())+1);
-//                            }else if(prod.getQualis().equals("B4")){
-//                                qualis.get(7).set(anoFim-prod.getAno(), qualis.get(7).get(anoFim-prod.getAno())+1);
-//                            }else if(prod.getQualis().equals("C")){
-//                                qualis.get(8).set(anoFim-prod.getAno(), qualis.get(8).get(anoFim-prod.getAno())+1);
+                            switch (prod.getQualis()) {
+                                case "A1" ->
+                                        qualis.get(0).set(anoFim - prod.getAno(), qualis.get(0).get(anoFim - prod.getAno()) + 1);
+                                case "A2" ->
+                                        qualis.get(1).set(anoFim - prod.getAno(), qualis.get(1).get(anoFim - prod.getAno()) + 1);
+                                case "A3" ->
+                                        qualis.get(2).set(anoFim - prod.getAno(), qualis.get(2).get(anoFim - prod.getAno()) + 1);
+                                case "A4" ->
+                                        qualis.get(3).set(anoFim - prod.getAno(), qualis.get(3).get(anoFim - prod.getAno()) + 1);
                             }
                         }
                     }
@@ -153,7 +139,7 @@ public class QualisController {
     }
     // NÃO PASSA O ANO
     @GetMapping(value = "/{idProg}/{tipo}")
-    public ResponseEntity obterQualisPorTipo(@PathVariable Integer idProg, @PathVariable String tipo) {
+    public ResponseEntity<?> obterQualisPorTipo(@PathVariable Integer idProg, @PathVariable String tipo) {
 
         QualisSummaryDTO summary = QualisSummaryDTO.builder().qtd(0).build();
 
@@ -173,12 +159,12 @@ public class QualisController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity<QualisSummaryDTO>(summary, HttpStatus.OK);
+        return new ResponseEntity<>(summary, HttpStatus.OK);
     }
 
     // PASSA O ANO
     @GetMapping(value = "/{idProg}/{tipo}/filter")
-    public ResponseEntity obterQualisPorTipo(@PathVariable Integer idProg, @PathVariable String tipo,
+    public ResponseEntity<?> obterQualisPorTipo(@PathVariable Integer idProg, @PathVariable String tipo,
                                              @RequestParam Integer anoIni, @RequestParam Integer anoFim) {
 
         QualisSummaryDTO summary = QualisSummaryDTO.builder().qtd(0).build();
@@ -259,14 +245,15 @@ public class QualisController {
                     if (prod.getTipo()!=null){
                         if(prod.getTipo().equals(tipo)){
                             if (prod.getQualis() != null) {
-                                if(prod.getQualis().equals("A1")){
-                                    qualis.get(0).set(anoFim-prod.getAno(), qualis.get(0).get(anoFim-prod.getAno())+1);
-                                }else if(prod.getQualis().equals("A2")){
-                                    qualis.get(1).set(anoFim-prod.getAno(), qualis.get(1).get(anoFim-prod.getAno())+1);
-                                }else if(prod.getQualis().equals("A3")){
-                                    qualis.get(2).set(anoFim-prod.getAno(), qualis.get(2).get(anoFim-prod.getAno())+1);
-                                }else if(prod.getQualis().equals("A4")){
-                                    qualis.get(3).set(anoFim-prod.getAno(), qualis.get(3).get(anoFim-prod.getAno())+1);
+                                switch (prod.getQualis()) {
+                                    case "A1" ->
+                                            qualis.get(0).set(anoFim - prod.getAno(), qualis.get(0).get(anoFim - prod.getAno()) + 1);
+                                    case "A2" ->
+                                            qualis.get(1).set(anoFim - prod.getAno(), qualis.get(1).get(anoFim - prod.getAno()) + 1);
+                                    case "A3" ->
+                                            qualis.get(2).set(anoFim - prod.getAno(), qualis.get(2).get(anoFim - prod.getAno()) + 1);
+                                    case "A4" ->
+                                            qualis.get(3).set(anoFim - prod.getAno(), qualis.get(3).get(anoFim - prod.getAno()) + 1);
                                 }
                             }
                         }

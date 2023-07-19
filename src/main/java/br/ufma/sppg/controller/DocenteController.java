@@ -44,6 +44,7 @@ public class DocenteController{
     @GetMapping("/obterTodosDocentes")
     public ResponseEntity<?> obterTodosDocentes(){
         try{
+            //obtem lista com todos os docentes
             List<Docente> docentes = docenteService.obterTodosDocentes();
             return ResponseEntity.ok(docentes);
         }catch (ServicoRuntimeException e){
@@ -51,40 +52,30 @@ public class DocenteController{
         }
     }
 
-    @GetMapping("/obterProducoesQualis/{data1}/{data2}")
-    public ResponseEntity<?> obterProducoesDeDocenteContadas(@PathVariable(value = "data1", required = true)  Integer data1,
-                                                             @PathVariable(value = "data2", required = true)  Integer data2){
-
+    @GetMapping("/obterProducoesQualis/{anoIni}/{anoFim}")
+    public ResponseEntity<?> obterProducoesQualis(@PathVariable(value = "anoIni", required = true)  Integer anoIni, @PathVariable(value = "anoFim", required = true)  Integer anoFim){
         try{
-            List<DocenteProducoes> producaoDocente = producaoServivce.obterProducoesDocentes(data1, data2);
+            List<DocenteProducoes> producoesDocente = producaoServivce.obterProducoesDocentes(anoIni, anoFim);
             List<DocenteProducoes> listaAux = new ArrayList<>();
-            for (DocenteProducoes docenteProducao : producaoDocente){
+            for (DocenteProducoes docenteProd : producoesDocente){
                 List<Integer> qualis = new ArrayList<>(Collections.nCopies(9, 0));
-                for (Producao producao : docenteProducao.getProducoes()){
+                for (Producao producao : docenteProd.getProducoes()){
                     if (producao.getQualis() != null){
-                        if(producao.getQualis().equals("A1")){
-                            qualis.set(0, qualis.get(0) + 1);
-                        }else if(producao.getQualis().equals("A2")){
-                            qualis.set(1, qualis.get(1) + 1);
-                        }else if(producao.getQualis().equals("A3")){
-                            qualis.set(2, qualis.get(2) + 1);
-                        }else if(producao.getQualis().equals("A4")){
-                            qualis.set(3, qualis.get(3) + 1);
-                        }else if(producao.getQualis().equals("B1")){
-                            qualis.set(4, qualis.get(4) + 1);
-                        }else if(producao.getQualis().equals("B2")){
-                            qualis.set(5, qualis.get(5) + 1);
-                        }else if(producao.getQualis().equals("B3")){
-                            qualis.set(6, qualis.get(6) + 1);
-                        }else if(producao.getQualis().equals("B4")){
-                            qualis.set(7, qualis.get(7) + 1);
-                        }else if(producao.getQualis().equals("C")){
-                            qualis.set(8, qualis.get(8) + 1);
+                        switch (producao.getQualis()) {
+                            case "A1" -> qualis.set(0, qualis.get(0) + 1);
+                            case "A2" -> qualis.set(1, qualis.get(1) + 1);
+                            case "A3" -> qualis.set(2, qualis.get(2) + 1);
+                            case "A4" -> qualis.set(3, qualis.get(3) + 1);
+                            case "B1" -> qualis.set(4, qualis.get(4) + 1);
+                            case "B2" -> qualis.set(5, qualis.get(5) + 1);
+                            case "B3" -> qualis.set(6, qualis.get(6) + 1);
+                            case "B4" -> qualis.set(7, qualis.get(7) + 1);
+                            case "C" -> qualis.set(8, qualis.get(8) + 1);
                         }
                     }
                 }
-                DocenteProducoes returnObject = DocenteProducoes.builder().docente(docenteProducao.getDocente()).qualis(qualis).build();
-                listaAux.add(returnObject);
+                DocenteProducoes ret = DocenteProducoes.builder().docente(docenteProd.getDocente()).qualis(qualis).build();
+                listaAux.add(ret);
             }
             return ResponseEntity.ok(listaAux);
         }catch (ServicoRuntimeException e){
@@ -92,35 +83,32 @@ public class DocenteController{
         }
     }
 
-    @GetMapping("/obter_producoes/{id}/{data1}/{data2}")
-    public ResponseEntity<?> obterProducoesDeDocente(@PathVariable(value = "id", required = true) Integer idDocente,
-    @PathVariable(value = "data1", required = true)  Integer data1,
-    @PathVariable(value = "data2", required = true)  Integer data2){
-
+    @GetMapping("/obterProdDocente/{idDocente}/{anoIni}/{anoFim}")
+    public ResponseEntity<?> obterProdDocente(@PathVariable(value = "idDocente", required = true) Integer idDocente,
+                                                    @PathVariable(value = "anoIni", required = true)  Integer anoIni,
+                                                    @PathVariable(value = "anoFim", required = true)  Integer anoFim){
         try{
-            List<Producao> producaoDocente = producaoServivce.obterProducoesDocente(idDocente, data1, data2);
-            return ResponseEntity.ok(producaoDocente);
+            List<Producao> producoesDocente = producaoServivce.obterProducoesDocente(idDocente, anoIni, anoFim);
+            return ResponseEntity.ok(producoesDocente);
         }catch (ServicoRuntimeException e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
-    @GetMapping("/obter_orientacoes/{id}")
-    public ResponseEntity<?> obterOrientacoesDeDocente(@PathVariable(value = "id", required = true) Integer idDocente,
-    @PathVariable(value = "data1", required = true)  Integer data1,
-    @PathVariable(value = "data2", required = true)  Integer data2){
-
+    @GetMapping("/obter_orientacoes/{idPrograma}/{anoIni}/{anoFim}")
+    public ResponseEntity<?> obterOrientacoesDeDocente(@PathVariable(value = "idPrograma", required = true) Integer idDocente,
+                                                        @PathVariable(value = "anoIni", required = true)  Integer anoIni,
+                                                        @PathVariable(value = "anoFim", required = true)  Integer anoFim){
         try{
-            List<Orientacao> orientacaoDocente = orientacaoServivce.obterOrientacaoDocente(idDocente, data1, data2);
+            List<Orientacao> orientacaoDocente = orientacaoServivce.obterOrientacaoDocente(idDocente, anoIni, anoFim);
             return ResponseEntity.ok(orientacaoDocente);
         }catch (ServicoRuntimeException e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
-    @GetMapping("/obter_tecnicas/{id}")
-    public ResponseEntity<?> obterTecnicasDeDocente(@PathVariable(value = "id", required = true) Integer idDocente){
-
+    @GetMapping("/obter_tecnicas/{idDocente}")
+    public ResponseEntity<?> obterTecnicasDeDocente(@PathVariable(value = "idDocente", required = true) Integer idDocente){
         try{
             List<Tecnica> tecnicaDocente = tecnicaServivce.obterTecnicasDocente(idDocente); 
             return ResponseEntity.ok(tecnicaDocente);
@@ -143,10 +131,9 @@ public class DocenteController{
     }
 
     @GetMapping("/obterTecnicasDocente/{idDocente}/{anoIni}/{anoFin}")
-    public ResponseEntity<?> obterTecnicasDocente(
-            @PathVariable(value = "idDocente", required = true) Integer idDocente,
-            @PathVariable(value = "anoIni", required = true) Integer anoIni,
-            @PathVariable(value = "anoFin", required = true) Integer anoFin){
+    public ResponseEntity<?> obterTecnicasDocente(@PathVariable(value = "idDocente", required = true) Integer idDocente,
+                                                    @PathVariable(value = "anoIni", required = true) Integer anoIni,
+                                                    @PathVariable(value = "anoFin", required = true) Integer anoFin){
         try{
             List <Tecnica> tecnicas = docenteService.obterTecnicasDocente(idDocente, anoIni, anoFin);
             return new ResponseEntity<>(tecnicas, HttpStatus.OK);
@@ -156,10 +143,9 @@ public class DocenteController{
     }
 
     @GetMapping("/obterProducoesDocente/{idDocente}/{anoIni}/{anoFin}")
-    public ResponseEntity<?> obterProducoesDocente(
-            @PathVariable(value = "idDocente", required = true) Integer idDocente,
-            @PathVariable(value = "anoIni", required = true) Integer anoIni,
-            @PathVariable(value = "anoFin", required = true) Integer anoFin){
+    public ResponseEntity<?> obterProducoesDocente(@PathVariable(value = "idDocente", required = true) Integer idDocente,
+                                                    @PathVariable(value = "anoIni", required = true) Integer anoIni,
+                                                    @PathVariable(value = "anoFin", required = true) Integer anoFin){
         try{
             List <Producao> producoes = docenteService.obterProducoesDocente(idDocente, anoIni, anoFin);
             return new ResponseEntity<>(producoes, HttpStatus.OK);
@@ -167,5 +153,4 @@ public class DocenteController{
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-
 }
