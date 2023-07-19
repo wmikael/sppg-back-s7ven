@@ -76,14 +76,15 @@ public class QualisController {
     }
 
     // PASSA O ANO
-    @GetMapping(value = "/indicesPrograma/{idProg}/{anoIni}/{anoFim}")
-    public ResponseEntity obterIndicesCapesPrograma(@PathVariable Integer idProg, @PathVariable Integer anoIni,
-                                            @PathVariable Integer anoFim) {
+    @GetMapping(value = "/indicesPrograma/{idPrograma}/{anoIni}/{anoFin}")
+    public ResponseEntity<?> obterIndicesCapesPrograma(@PathVariable(value = "idPrograma", required = true) Integer idPrograma,
+                                                       @PathVariable(value = "anoIni", required = true) Integer anoIni,
+                                                       @PathVariable(value = "anoFin", required = true) Integer anoFin){
         Indice indice;
         List<Producao> producoes;
         try {
-            indice = service.obterProducaoIndices(idProg, anoIni, anoFim);
-            producoes = service.obterProducoes(idProg, anoIni, anoFim);
+            indice = service.obterProducaoIndices(idPrograma, anoIni, anoFin);
+            producoes = service.obterProducoes(idPrograma, anoIni, anoFin);
         } catch (ServicoRuntimeException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -92,22 +93,19 @@ public class QualisController {
     }
 
     // PASSA O ANO
-    @GetMapping(value = "/indice/{idProg}/filter")
-    public ResponseEntity obterIndicesCapes(@PathVariable Integer idProg, @RequestParam Integer anoIni,
-                                            @RequestParam Integer anoFim) {
-
-        Indice indice;
-        List<Producao> producoes;
+    @GetMapping(value = "/indice/{idPrograma}/{anoIni}/{anoFin}")
+    public ResponseEntity<?> obterIndicesCapes(@PathVariable(value = "idPrograma", required = true) Integer idPrograma,
+            @PathVariable(value = "anoIni", required = true) Integer anoIni,
+            @PathVariable(value = "anoFin", required = true) Integer anoFin){
 
         try {
-            indice = service.obterProducaoIndices(idProg, anoIni, anoFim);
-            producoes = service.obterProducoes(idProg, anoIni, anoFim);
+            Indice indice = service.obterProducaoIndices(idPrograma, anoIni, anoFin);
+            List<Producao> producoes = service.obterProducoes(idPrograma, anoIni, anoFin);
+            IndiceQualisDTO res = IndiceQualisDTO.builder().indice(indice).producoes(producoes).build();
+            return ResponseEntity.ok(res);
         } catch (ServicoRuntimeException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-
-        IndiceQualisDTO res = IndiceQualisDTO.builder().indice(indice).producoes(producoes).build();
-        return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
     @GetMapping(value = "/producoesQualis/{idProg}/{anoIni}/{anoFim}")

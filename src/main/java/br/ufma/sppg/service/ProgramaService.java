@@ -94,55 +94,28 @@ public class ProgramaService {
         List<Docente> docentes = repository.obterDocentes(idPrograma);
         Double iRestrito = 0.0;
         Double iNRestrito = 0.0;
-        Double iGeral;
-        List<Producao> producoes;
+        Double iGeral = 0.0;
+        List<Producao> producoes = new ArrayList<>();
         ArrayList<Integer> indicesProd = new ArrayList<>();
 
         for (Docente docente : docentes) {
 
             producoes = docente.getProducoes();
-
             for (Producao producao : producoes) {
-
                 if (producao.getAno() >= anoIni && producao.getAno() <= anoFin
                         && !indicesProd.contains(producao.getId())) {
-
                     indicesProd.add(producao.getId());
-                    switch (producao.getQualis()) {
-                        case "A1":
-                            iRestrito += 1.0f;
-                            break;
-
-                        case "A2":
-                            iRestrito += 0.85;
-                            break;
-
-                        case "A3":
-                            iRestrito += 0.725;
-                            break;
-
-                        case "A4":
-                            iRestrito += 0.625;
-                            break;
-
-                        case "B1":
-                            iNRestrito += 0.5;
-                            break;
-
-                        case "B2":
-                            iNRestrito += 0.25;
-                            break;
-
-                        case "B3":
-                            iNRestrito += 0.1;
-                            break;
-
-                        case "B4":
-                            iNRestrito += 0.05;
-                            break;
-
-                        default:
-                            throw new ServicoRuntimeException("Uma das produções possui o Qualis inválido");
+                    if(producao.getQualis() != null){
+                        switch (producao.getQualis()) {
+                            case "A1" -> iRestrito += 1.0f;
+                            case "A2" -> iRestrito += 0.85;
+                            case "A3" -> iRestrito += 0.725;
+                            case "A4" -> iRestrito += 0.625;
+                            case "B1" -> iNRestrito += 0.5;
+                            case "B2" -> iNRestrito += 0.25;
+                            case "B3" -> iNRestrito += 0.1;
+                            case "B4" -> iNRestrito += 0.05;
+                        }
                     }
                 }
             }
