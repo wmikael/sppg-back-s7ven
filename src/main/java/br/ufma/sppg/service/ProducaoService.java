@@ -4,14 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import br.ufma.sppg.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.ufma.sppg.dto.DocenteProducoes;
-import br.ufma.sppg.model.Docente;
-import br.ufma.sppg.model.Orientacao;
-import br.ufma.sppg.model.Producao;
-import br.ufma.sppg.model.Programa;
 import br.ufma.sppg.repo.DocenteRepository;
 import br.ufma.sppg.repo.OrientacaoRepository;
 import br.ufma.sppg.repo.ProducaoRepository;
@@ -116,7 +113,24 @@ public class ProducaoService {
         throw new ServicoRuntimeException("Docente Inexistente");
     }
 
+    @Transactional
+    public Producao atualizarEstatisticas(Integer idProducao, Integer qtdGrad, Integer qtdMestrado,
+                                         Integer qtdDoutorado) {
 
+        Optional<Producao> producao = prodRepo.findById(idProducao);
+
+        if (producao.isPresent()) {
+            Producao producaoObj = producao.get();
+
+            producaoObj.setQtdGrad(qtdGrad);
+            producaoObj.setQtdMestrado(qtdMestrado);
+            producaoObj.setQtdDoutorado(qtdDoutorado);
+
+            return prodRepo.save(producaoObj);
+        }
+
+        throw new ServicoRuntimeException("A técnica informada não existe!");
+    }
     
     private void verificarProducao(Producao producao){
         if(producao==null)
@@ -194,6 +208,16 @@ public class ProducaoService {
         }
         return producoesQualis;
     }
+
+//    @Transactional
+//    public Producao atualizarOrientacoes(List<Integer> idOrientacao, Integer idProducao){
+//        Producao producao = prodRepo.findById(idProducao).get();
+//        for( Integer id : idOrientacao){
+//            Orientacao orientacao = oriRepo.findById(id).get();
+//            producao.getOrientacoes().add(orientacao);
+//        }
+//        return prodRepo.save(producao);
+//    }
 
 /*
     public boolean excluirProducao(Integer idProducao){

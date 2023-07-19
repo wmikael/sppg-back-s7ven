@@ -1,15 +1,14 @@
 package br.ufma.sppg.controller;
 
 import br.ufma.sppg.model.Docente;
+import br.ufma.sppg.model.Producao;
 import br.ufma.sppg.model.Tecnica;
 import br.ufma.sppg.service.TecnicaService;
 import br.ufma.sppg.service.exceptions.ServicoRuntimeException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -40,5 +39,19 @@ public class TecnicaController {
         }
     }
 
+
+    @PutMapping("/atualizaEstatisticasTecnica")
+    public ResponseEntity<?> atualizaEstatisticasProducao(
+            @RequestParam(value = "idTecnica", required = true) Integer idTecnica,
+            @RequestParam(value = "qtd_grad", required = true) Integer qtd_grad,
+            @RequestParam(value = "qtd_mest", required = true) Integer qtd_mest,
+            @RequestParam(value = "qtd_dout", required = true) Integer qtd_dout){
+        try{
+            Tecnica tecnica= tecnicaService.atualizarEstatisticas(idTecnica, qtd_grad, qtd_mest, qtd_dout);
+            return new ResponseEntity<>(tecnica, HttpStatus.OK);
+        }catch (ServicoRuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
 }
