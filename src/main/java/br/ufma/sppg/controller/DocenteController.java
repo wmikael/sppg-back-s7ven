@@ -25,7 +25,7 @@ import br.ufma.sppg.service.exceptions.ServicoRuntimeException;
 import java.util.List;
 
 
-@RequestMapping("/api/Docente")
+@RequestMapping("/api/docente")
 @RestController
 public class DocenteController{
     @Autowired
